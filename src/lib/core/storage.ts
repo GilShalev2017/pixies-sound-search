@@ -59,6 +59,8 @@ export function createBrowserStore(): KeyValueStore {
 export interface TypedStore<T> {
   read(): T;
   write(value: T): void;
+  /** Storage key, so a reactive wrapper can watch cross-tab `storage` events. */
+  readonly key: string;
 }
 
 /** Wraps a raw store with JSON (de)serialisation and a validating decoder. */
@@ -69,6 +71,7 @@ export function createTypedStore<T>(
   fallback: T,
 ): TypedStore<T> {
   return {
+    key,
     read() {
       const raw = store.get(key);
       if (raw === null) return fallback;
@@ -80,6 +83,54 @@ export function createTypedStore<T>(
     },
     write(value) {
       store.set(key, JSON.stringify(value));
+    },
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/* React-facing wrapper                                                        */
+/* -------------------------------------------------------------------------- */
+
+export interface ReactiveStore<T> {
+  subscribe(listener: () => void): () => void;
+  /** Referentially stable between writes, as `useSyncExternalStore` requires. */
+  getSnapshot(): T;
+  set(value: T): void;
+}
+
+/**
+ * Turns a `TypedStore` into an external store React can subscribe to.
+ * The cached snapshot keeps identity stable, and `storage` events keep two open
+ * tabs in agreement about the recent searches.
+ */
+export function createReactiveStore<T>(typed: TypedStore<T>): ReactiveStore<T> {
+  let cache: { value: T } | null = null;
+  const listeners = new Set<() => void>();
+
+  const emit = () => listeners.forEach((listener) => listener());
+
+  return {
+    subscribe(listener) {
+      listeners.add(listener);
+      const onStorage = (event: StorageEvent) => {
+        if (event.key !== null && event.key !== typed.key) return;
+        cache = null;
+        listener();
+      };
+      window.addEventListener('storage', onStorage);
+      return () => {
+        listeners.delete(listener);
+        window.removeEventListener('storage', onStorage);
+      };
+    },
+    getSnapshot() {
+      cache ??= { value: typed.read() };
+      return cache.value;
+    },
+    set(value) {
+      cache = { value };
+      typed.write(value);
+      emit();
     },
   };
 }

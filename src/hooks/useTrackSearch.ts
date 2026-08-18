@@ -1,7 +1,7 @@
 'use client';
 
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { searchKeys } from '@/lib/api/queryKeys';
 import { searchTracks } from '@/lib/api/searchClient';
 import {
@@ -85,15 +85,38 @@ export function useTrackSearch(term: string): TrackSearchResult {
     });
   }, [settled, data?.nextCursor, term, queryClient]);
 
+  // A navigation is "locked in" until the page it asked for has settled.
+  // The ref blocks clicks fired inside the same tick (they would all read the
+  // same pre-click state and walk the cursor stack several pages ahead); the
+  // state keeps the buttons' disabled attribute in sync with it.
+  const navLockRef = useRef(false);
+  const [navLocked, setNavLocked] = useState(false);
+
+  useEffect(() => {
+    if (settled && navLockRef.current) {
+      navLockRef.current = false;
+      setNavLocked(false);
+    }
+  }, [settled, cursor]);
+
+  const canNavigate = settled && !navLocked;
+
+  const lockNavigation = useCallback(() => {
+    navLockRef.current = true;
+    setNavLocked(true);
+  }, []);
+
   const goToNextPage = useCallback(() => {
-    if (!settled) return;
+    if (!settled || navLockRef.current) return;
+    lockNavigation();
     setState((current) => ({ ...current, cursors: goNext(current.cursors, data?.nextCursor ?? null) }));
-  }, [settled, data?.nextCursor]);
+  }, [settled, data?.nextCursor, lockNavigation]);
 
   const goToPrevPage = useCallback(() => {
-    if (!settled) return;
+    if (!settled || navLockRef.current) return;
+    lockNavigation();
     setState((current) => ({ ...current, cursors: goPrev(current.cursors) }));
-  }, [settled]);
+  }, [settled, lockNavigation]);
 
   const items = query.isPlaceholderData ? [] : (query.data?.items ?? []);
 
@@ -107,8 +130,8 @@ export function useTrackSearch(term: string): TrackSearchResult {
     isFetching: query.isFetching,
     isEmpty: enabled && settled && !query.isError && items.length === 0,
     error: query.isError ? query.error : null,
-    canPrev: settled && canGoPrev(cursors),
-    canNext: settled && items.length > 0 && canGoNext(cursors, data?.nextCursor ?? null),
+    canPrev: canNavigate && canGoPrev(cursors),
+    canNext: canNavigate && items.length > 0 && canGoNext(cursors, data?.nextCursor ?? null),
     goToNextPage,
     goToPrevPage,
     retry: () => void query.refetch(),

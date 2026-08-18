@@ -4,12 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:mock": "SOUND_PROVIDER=mock next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "start:mock": "SOUND_PROVIDER=mock next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",
+    "geist": "^1.7.2",
     "motion": "^13.1.0",
     "next": "16.3.1",
     "react": "19.2.8",

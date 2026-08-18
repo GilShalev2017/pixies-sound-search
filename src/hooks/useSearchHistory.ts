@@ -7,22 +7,21 @@ import { usePersistentState } from './usePersistentState';
 
 export interface SearchHistoryApi {
   readonly entries: readonly string[];
-  readonly hydrated: boolean;
   remember(term: string): void;
   forget(term: string): void;
   clear(): void;
 }
 
-/** Recent searches: pure list rules from `core/history`, persistence from `core/storage`. */
+/** Stable references: the factory and the fallback must not change identity. */
+const EMPTY: string[] = [];
+
+/** Recent searches: list rules from `core/history`, persistence from `core/storage`. */
 export function useSearchHistory(): SearchHistoryApi {
-  const [entries, setEntries, hydrated] = usePersistentState<string[]>(() => createHistoryStore(), []);
+  const [entries, setEntries] = usePersistentState<string[]>(createHistoryStore, EMPTY);
 
   const remember = useCallback((term: string) => setEntries((current) => addSearchTerm(current, term)), [setEntries]);
   const forget = useCallback((term: string) => setEntries((current) => removeSearchTerm(current, term)), [setEntries]);
-  const clear = useCallback(() => setEntries([]), [setEntries]);
+  const clear = useCallback(() => setEntries(EMPTY), [setEntries]);
 
-  return useMemo(
-    () => ({ entries, hydrated, remember, forget, clear }),
-    [entries, hydrated, remember, forget, clear],
-  );
+  return useMemo(() => ({ entries, remember, forget, clear }), [entries, remember, forget, clear]);
 }

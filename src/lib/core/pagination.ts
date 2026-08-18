@@ -32,11 +32,17 @@ export function canGoNext(state: CursorState, nextCursor: string | null | undefi
 }
 
 export function goNext(state: CursorState, nextCursor: string | null | undefined): CursorState {
-  const alreadyVisited = state.index < state.stack.length - 1;
-  if (alreadyVisited) return { ...state, index: state.index + 1 };
+  const remembered = state.index + 1 < state.stack.length ? state.stack[state.index + 1] : undefined;
+
+  // Already been here and the provider agrees: just step forward.
+  if (remembered !== undefined && (!nextCursor || nextCursor === remembered)) {
+    return { ...state, index: state.index + 1 };
+  }
+
   if (!nextCursor) return state;
 
-  // Truncate any stale forward history before pushing the new page.
+  // Either a brand new page, or the provider handed back a *different* forward
+  // cursor — trust the fresh one and drop the stale forward history.
   return {
     stack: [...state.stack.slice(0, state.index + 1), nextCursor],
     index: state.index + 1,
