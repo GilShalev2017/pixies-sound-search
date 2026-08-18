@@ -9,7 +9,9 @@
   --color-canvas-soft: #0b0b16;
   --color-ink: #f4f4fb;
   --color-muted: #a0a3bd;
-  --color-faint: #6e7191;
+  /* Lightened from the original #6e7191 so 0.7rem helper text still clears
+     WCAG AA (4.5:1) on the translucent panels. */
+  --color-faint: #8b90b0;
   --color-line: rgba(255, 255, 255, 0.09);
   --color-accent: #a78bfa;
   --color-accent-strong: #7c3aed;
