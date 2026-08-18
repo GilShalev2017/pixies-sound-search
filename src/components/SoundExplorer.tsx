@@ -4,12 +4,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useSearchHistory } from '@/hooks/useSearchHistory';
+import { useSearchShortcuts } from '@/hooks/useSearchShortcuts';
 import { useTrackSearch } from '@/hooks/useTrackSearch';
 import { useViewMode } from '@/hooks/useViewMode';
 import { normalizeTerm } from '@/lib/core/history';
 import type { Track } from '@/lib/domain/track';
 import { flyToStage } from '@/lib/ui/fly';
 import { ImageStage } from './ImageStage';
+import { KeyboardHints } from './KeyboardHints';
 import { PaginationBar } from './PaginationBar';
 import { RecentSearches } from './RecentSearches';
 import { ResultsPanel } from './ResultsPanel';
@@ -46,6 +48,8 @@ export function SoundExplorer() {
   const stagePlayRef = useRef<HTMLButtonElement>(null);
   /** Guards against an older flight finishing after a newer one. */
   const flightRef = useRef(0);
+  /** Set when a selection came from the results list, so focus should follow it. */
+  const shouldFocusStage = useRef(false);
 
   const { remember } = history;
 
@@ -102,12 +106,24 @@ export function SoundExplorer() {
       // A newer selection started mid-flight — let it win.
       if (flightRef.current !== flightId) return;
 
+      // Focus follows the content so keyboard users land on the play control;
+      // the effect below runs after React has committed the new button.
+      shouldFocusStage.current = true;
       setSelected(track);
-      // Focus follows the content so keyboard users land on the play control.
-      requestAnimationFrame(() => stagePlayRef.current?.focus());
     },
     [reducedMotion, remember, term],
   );
+
+  // Focus management for the flight: once the staged track has rendered, move
+  // focus to its play control so the keyboard journey continues where the eye is.
+  useEffect(() => {
+    if (!selected || !shouldFocusStage.current) return;
+    shouldFocusStage.current = false;
+    stagePlayRef.current?.focus();
+  }, [selected]);
+
+  const clearSearch = useCallback(() => setInputValue(''), []);
+  useSearchShortcuts(inputRef, clearSearch);
 
   const clearSelection = useCallback(() => {
     flightRef.current += 1;
@@ -163,7 +179,7 @@ export function SoundExplorer() {
         </section>
 
         {/* Image stage */}
-        <div className="order-2 lg:col-span-4">
+        <div className="order-2 lg:col-span-4 lg:sticky lg:top-6 lg:self-start">
           <ImageStage
             track={selected}
             isPlaying={isPlaying}
@@ -176,7 +192,7 @@ export function SoundExplorer() {
         </div>
 
         {/* Recent searches */}
-        <div className="order-3 lg:col-span-3">
+        <div className="order-3 flex flex-col gap-5 lg:col-span-3 lg:sticky lg:top-6 lg:self-start">
           <RecentSearches
             entries={history.entries}
             activeTerm={term}
@@ -184,6 +200,7 @@ export function SoundExplorer() {
             onRemove={history.forget}
             onClear={history.clear}
           />
+          <KeyboardHints />
         </div>
       </div>
 
