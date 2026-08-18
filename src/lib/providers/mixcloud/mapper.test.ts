@@ -36,7 +36,8 @@ describe('mapCloudcast', () => {
     expect(track!.artwork.large).toBe('https://img/large.jpg');
     expect(track!.durationSec).toBe(3661);
     expect(track!.tags).toEqual(['house', 'disco', 'funk']);
-    expect(track!.embedUrl).toContain('feed=%2Fspartacus%2Fparty-time%2F');
+    expect(track!.embedUrl).toContain('https://www.mixcloud.com/widget/iframe/');
+    expect(track!.embedUrl).toContain('feed=https%3A%2F%2Fwww.mixcloud.com%2Fspartacus%2Fparty-time%2F');
   });
 
   it('returns null for entries we cannot display', () => {
@@ -82,8 +83,12 @@ describe('mapSearchResponse', () => {
 
 describe('buildEmbedUrl', () => {
   it('builds a widget URL with autoplay when asked', () => {
-    expect(buildEmbedUrl('/a/b/', true)).toContain('autoplay=1');
-    expect(buildEmbedUrl('/a/b/', false)).not.toContain('autoplay');
-    expect(buildEmbedUrl(undefined, true)).toBeNull();
+    expect(buildEmbedUrl('/a/b/', undefined, true)).toContain('autoplay=1');
+    expect(buildEmbedUrl('/a/b/', undefined, false)).not.toContain('autoplay');
+    expect(buildEmbedUrl(undefined, undefined, true)).toBeNull();
+  });
+
+  it('falls back to the cloudcast key when there is no canonical URL', () => {
+    expect(buildEmbedUrl('/a/b/', undefined, false)).toContain('feed=%2Fa%2Fb%2F');
   });
 });
