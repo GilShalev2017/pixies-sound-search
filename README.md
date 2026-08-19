@@ -28,10 +28,13 @@ Other scripts:
 | `npm run dev:mock`    | Same app, offline demo provider — no external calls (great for demos/CI) |
 | `npm run build`       | Production build                                                        |
 | `npm start`           | Serve the production build                                              |
-| `npm test`            | Vitest unit/component tests (57 tests)                                   |
+| `npm test`            | Vitest unit/component tests (68 tests)                                   |
+| `npm run test:e2e`    | Playwright end-to-end suite (10 specs) — builds, then drives the real app |
 | `npm run typecheck`   | `tsc --noEmit`                                                          |
 | `npm run lint`        | ESLint                                                                  |
 | `npm run verify`      | typecheck + lint + tests, in one go                                     |
+
+The first `npm run test:e2e` needs browsers: `npx playwright install chromium`.
 
 No API key is required — Mixcloud's public search endpoint is open. The only configuration is `SOUND_PROVIDER` (see `.env.example`):
 
@@ -151,28 +154,43 @@ The list/tile choice is persisted the same way and restored on the next visit.
 - **Focus management for the flight**: when a result is activated, focus moves to the staged cover's play button once it has rendered — the keyboard journey follows the animation instead of being stranded in the list.
 - ARIA where it earns its place: `aria-controls` from the search box and paging controls to the results region, `aria-busy` while fetching, a single polite `role="status"` region that announces "Searching…", the result count, the empty state and failures, `aria-current` on the selected result and the active recent search, `aria-pressed` on the list/tile toggle, `role="alert"` for errors.
 - Visible focus rings everywhere (never removed), and `prefers-reduced-motion` disables the flight and all decorative animation.
-- Verified with axe-core on four states (idle, results, playing, tiles): **no violations**. Text colours were checked manually against the translucent panels, since axe cannot compute contrast over gradients — the small helper colour was lightened to clear 4.5:1.
+- Verified with axe-core on four states (idle, results, playing, tiles): **no violations**. Text colours were checked manually against the translucent panels, since axe cannot compute contrast over gradients — the small helper colour was lightened to clear 4.5:1. Writing the end-to-end tests against accessible names also caught a real defect: the decorative rank number in the recent-searches list was part of each button's accessible name ("1 adele"), so it is now `aria-hidden`.
 
 ---
 
 ## Testing
 
 ```bash
-npm test
+npm test          # 68 unit + component tests (Vitest)
+npm run test:e2e  # 10 end-to-end specs (Playwright, against the mock provider)
 ```
 
-57 tests, aimed at the logic rather than the pixels:
+**Unit and component tests** — aimed at the logic rather than the pixels:
 
 | Area                              | File                                     |
 | --------------------------------- | ---------------------------------------- |
 | Recent-searches rules (dedup, cap, normalisation, corrupt data) | `lib/core/history.test.ts` |
 | Cursor pagination state machine   | `lib/core/pagination.test.ts`            |
 | Storage port + typed/validated persistence | `lib/core/storage.test.ts`      |
+| **The `SoundProvider` contract, run against every registered provider** | `lib/providers/contract.test.ts` |
 | Mixcloud payload mapping + cursor sanitising | `lib/providers/mixcloud/mapper.test.ts` |
 | API client: params, contract validation, error taxonomy, aborts | `lib/api/searchClient.test.ts` |
 | Search hook: stale responses, page reset, rapid paging, empty/error | `hooks/useTrackSearch.test.tsx` |
 | History/view-mode persistence across "visits" | `hooks/useSearchHistory.test.tsx` |
 | Results view: all five states + a11y attributes | `components/ResultsPanel.test.tsx` |
+
+`contract.test.ts` is the safety net behind the swappable data layer: a new adapter is correct when it passes that file — limit respected, forward cursor offered only while results remain, own cursors accepted and foreign ones rejected, empty sets reported rather than invented, failures raised as a classifiable `SearchError`, and cancellation surfaced as an abort.
+
+**End-to-end tests** (`e2e/search.spec.ts`) drive the built app through **roles and accessible names only**, so a passing assertion also proves the flow is reachable by a screen reader. They run against the mock provider, so they are deterministic and never depend on Mixcloud being up:
+
+- six results per page, forward through all four pages, Next disabled when the provider stops offering a cursor, Previous returning to the exact page before;
+- rapid Next clicks cannot run the cursor past the data;
+- clicking a result flies the cover to the stage, moves focus to its play button, and clicking the cover embeds a playing iframe;
+- the last five searches survive a reload, drop the oldest, and never duplicate a term; clicking one re-runs it;
+- the list/tile choice survives a reload;
+- empty state, failing state, retry, and recovery;
+- **a deliberately delayed response for an abandoned term is discarded** rather than overwriting the current results (the request is held back with `page.route`);
+- the whole journey with the keyboard only: `/` → type → Tab → Enter → play → `Esc`.
 
 ---
 
@@ -208,7 +226,7 @@ Then put the resulting URL at the top of this README.
 | 6   | Clicking the central image embeds and plays the track     | `TrackPlayer`, `embedUrl` built in the adapter                    |
 | 7   | Debounce, AbortController, no stale responses, safe paging | `useDebouncedValue`, `useTrackSearch`, route handler              |
 | 8   | Loading / empty / error-with-retry states                 | `StateViews`, `ResultsPanel`                                      |
-| 9   | TypeScript, no `any`, core logic separate + unit tested    | `lib/core/*`, `lib/providers/*`, 57 tests                          |
+| 9   | TypeScript, no `any`, core logic separate + unit tested    | `lib/core/*`, `lib/providers/*`, 68 unit + 10 e2e tests             |
 | 10  | Decoupled data / UI / state layers, swappable provider     | this section + `lib/providers/types.ts`                           |
 | 11  | Deployed, public URL at the top of the README              | [Deployment](#deployment)                                         |
 | 12  | Tile ⇄ list toggle, remembered for next visit (bonus)      | `PaginationBar`, `useViewMode`, `ResultTile`                      |
@@ -224,4 +242,4 @@ Then put the resulting URL at the top of this README.
 - **Plain `<img>` instead of `next/image`.** Artwork hostnames belong to whichever provider is configured; `next/image` would force them into `next.config.ts` and undo the point of the swappable data layer. Artwork has a gradient fallback on error.
 - **The flight uses the Web Animations API, not a layout animation library.** The ghost element is measured from the real DOM, animated, then removed — no library, no layout thrash in the list, and it degrades to an instant swap under `prefers-reduced-motion`.
 - **Tailwind v4 with a small token layer.** Colours, radii and animations are declared once in `@theme`; component primitives (`.panel`, `.btn`, `.chip`, `.skeleton`) live in `@layer components` so the JSX stays readable instead of collecting twenty utilities per element.
-- **What I would add next:** an infinite-scroll variant of the same cursor stack, `next/image` behind a provider-declared hostname list, a Playwright end-to-end test of the flight (the animation is currently only verified by hand and by screenshot), and per-provider rate-limit handling with a friendlier backoff message.
+- **What I would add next:** an infinite-scroll variant of the same cursor stack, `next/image` behind a provider-declared hostname list, visual-regression snapshots of the flight's mid-flight frame (the end states are covered end to end, the in-between is still eyeballed), and per-provider rate-limit handling with a friendlier backoff message.

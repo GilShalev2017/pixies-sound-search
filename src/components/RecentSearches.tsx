@@ -55,7 +55,12 @@ export function RecentSearches({ entries, activeTerm, onSelect, onRemove, onClea
                       : 'border-transparent bg-white/[0.03] text-muted hover:border-line hover:bg-white/[0.07] hover:text-ink'
                   }`}
                 >
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-white/[0.06] font-mono text-[0.65rem] text-faint">
+                  {/* Decorative rank: hidden from the accessible name so the
+                      button announces just the search term. */}
+                  <span
+                    aria-hidden="true"
+                    className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-white/[0.06] font-mono text-[0.65rem] text-faint"
+                  >
                     {index + 1}
                   </span>
                   <span className="truncate">{term}</span>
