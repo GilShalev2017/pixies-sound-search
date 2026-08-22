@@ -1,8 +1,8 @@
 # PiXies — sound search
 
-**Live app: `https://<your-deployment>.vercel.app`** ← _replace this line with your deployment URL before submitting (see [Deployment](#deployment), it takes about two minutes)._
+**Live app: `https://pixies-eta.vercel.app`**
 
-Repository: `https://github.com/<you>/pixies`
+Repository: `https://github.com/GilShalev2017/pixies-sound-search`
 
 Search a sound library, watch the cover of a result fly into the image stage, and click it to play the track — built with **Next.js (App Router) + TypeScript + TanStack Query**, on top of the **Mixcloud API**.
 
