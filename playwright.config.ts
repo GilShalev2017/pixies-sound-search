@@ -26,7 +26,9 @@ export default defineConfig({
     launchOptions: executablePath ? { executablePath } : {},
   },
   webServer: {
-    command: `SOUND_PROVIDER=mock npx next start -p ${PORT}`,
+    // `env` rather than an inline `VAR=value` prefix, so this runs on Windows too.
+    command: `npx next start -p ${PORT}`,
+    env: { SOUND_PROVIDER: 'mock' },
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
