@@ -1,5 +1,10 @@
 'use client';
 
+// Called once from SoundExplorer.tsx (`const reducedMotion =
+// usePrefersReducedMotion()`) and threaded down as a prop to disable
+// animation-heavy UI. Independent of usePersistentState.ts above - this
+// reads a live OS/browser media query rather than anything stored by us,
+// so there is nothing to persist.
 import { useSyncExternalStore } from 'react';
 
 const QUERY = '(prefers-reduced-motion: reduce)';

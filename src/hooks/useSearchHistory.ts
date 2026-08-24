@@ -1,5 +1,11 @@
 'use client';
 
+// Called once from SoundExplorer.tsx: `const history = useSearchHistory()`,
+// to back the recent-searches list. Like useViewMode.ts, this is
+// usePersistentState.ts plus specifics: the store comes from
+// src/lib/core/preferences.ts, and the add/remove *rules* (dedup, max
+// length, ordering) come from src/lib/core/history.ts - this file only
+// wires the two together and exposes them as remember/forget/clear.
 import { useCallback, useMemo } from 'react';
 import { addSearchTerm, removeSearchTerm } from '@/lib/core/history';
 import { createHistoryStore } from '@/lib/core/preferences';

@@ -1,3 +1,8 @@
+// No functions here, just the shared types every layer imports: the
+// provider adapters (src/lib/providers/*) produce a Track/TrackPage, the
+// route handler (route.ts) forwards it, searchClient.ts receives it, and
+// React components render it. Nothing "calls" this file - it's pure types,
+// erased at build time.
 /**
  * Domain model.
  *

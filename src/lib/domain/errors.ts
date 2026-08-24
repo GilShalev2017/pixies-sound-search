@@ -1,3 +1,9 @@
+// Thrown by the provider implementations (src/lib/providers/mixcloud/index.ts,
+// src/lib/providers/mock/index.ts) when a search fails, and caught in two
+// places: the route handler (route.ts, server side - turns it into an HTTP
+// error response) and searchClient.ts (client side - re-throws its own
+// SearchError built from that response). `toUserMessage` below is called
+// by StateViews.tsx to turn a caught SearchError into copy shown on screen.
 /** Error taxonomy shared by the data layer and the UI. */
 export type SearchErrorKind =
   | 'network' // the request never reached us (offline, DNS, CORS, ...)

@@ -1,3 +1,9 @@
+// Pure translation layer, used only by ./index.ts (the mixcloud provider).
+// Every export here takes Mixcloud's raw wire shapes (./types.ts) and
+// returns this project's own domain shapes (@/lib/domain/track) - no
+// network calls, no React, easy to unit-test in isolation (see
+// mapper.test.ts). `isMixcloudUrl` is also re-exported by index.ts and
+// used as `isValidCursor`, since a Mixcloud paging cursor is just a URL.
 import type { Track, TrackPage } from '@/lib/domain/track';
 import type { MixcloudCloudcast, MixcloudPictures, MixcloudSearchResponse } from './types';
 

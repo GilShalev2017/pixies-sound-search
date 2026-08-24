@@ -1,3 +1,8 @@
+// The only file the route handler talks to when it needs a provider.
+// `getActiveProvider()` is called once per request, from GET() in
+// src/app/api/tracks/search/route.ts - that's its single caller. It reads
+// the SOUND_PROVIDER env var so which backend answers a search is a
+// deployment-time choice, never something the browser can influence.
 import { mixcloudProvider } from './mixcloud';
 import { mockProvider } from './mock';
 import type { SoundProvider } from './types';

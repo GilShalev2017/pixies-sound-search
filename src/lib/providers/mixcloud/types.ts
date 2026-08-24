@@ -1,3 +1,8 @@
+// Just types - describes the JSON Mixcloud's API actually sends back.
+// Used by index.ts (to type the parsed fetch() response) and by
+// mapper.ts (to type what mapCloudcast/mapSearchResponse read from).
+// Deliberately kept separate from src/lib/domain/track.ts: this is
+// Mixcloud's shape, not ours, and it never crosses ./mapper.ts outward.
 /** Raw shapes returned by https://api.mixcloud.com — never leave the data layer. */
 
 export interface MixcloudPictures {

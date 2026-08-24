@@ -1,3 +1,9 @@
+// The "port" in this project's port/adapter setup. Nothing here executes -
+// it's the interface that src/lib/providers/mixcloud/index.ts and
+// src/lib/providers/mock/index.ts both implement, and that
+// registry.ts's return type promises to the route handler. As long as a
+// provider satisfies this shape, GET() in route.ts doesn't know or care
+// which one it's talking to.
 import type { SearchQuery, TrackPage } from '@/lib/domain/track';
 
 export interface ProviderSearchOptions extends SearchQuery {

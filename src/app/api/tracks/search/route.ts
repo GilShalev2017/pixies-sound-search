@@ -1,3 +1,15 @@
+// Next.js App Router "Route Handler". Its location on disk IS the route:
+// src/app/api/tracks/search/route.ts -> GET /api/tracks/search
+//
+// Next.js itself imports this file and calls the exported `GET` function
+// whenever a GET request hits that URL - nothing in this codebase calls
+// GET directly, and it is not middleware (middleware runs earlier, before
+// routing, from a separate src/middleware.ts file if one exists). Other
+// HTTP verbs would be handled by exporting POST/PUT/DELETE/etc. from this
+// same file; none are defined here, so Next.js auto-replies 405 to them.
+//
+// `fail` below is a plain local helper, not framework-invoked - GET calls
+// it itself whenever it needs to return an error response.
 import { NextResponse } from 'next/server';
 import { QUERY_PARAM, type ErrorResponseBody, type SearchResponseBody } from '@/lib/api/contract';
 import { SearchError } from '@/lib/domain/errors';

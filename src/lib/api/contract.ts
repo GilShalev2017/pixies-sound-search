@@ -1,3 +1,9 @@
+// Shared vocabulary between the two ends of the HTTP boundary:
+// - the server writes these shapes in src/app/api/tracks/search/route.ts
+// - the browser reads them in src/lib/api/searchClient.ts
+// Nothing here executes on its own; it's imported by both sides so a
+// change to the JSON shape is a compile error in both places at once,
+// instead of a runtime mismatch discovered by a user.
 import type { Track, TrackPage } from '@/lib/domain/track';
 import type { SearchErrorKind } from '@/lib/domain/errors';
 

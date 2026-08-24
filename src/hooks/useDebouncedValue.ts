@@ -1,5 +1,10 @@
 'use client';
 
+// Generic utility hook, called once from SoundExplorer.tsx:
+// `useDebouncedValue(inputValue, 300)`. It sits between the raw search
+// box value and the `term` passed to useTrackSearch(), so a request only
+// fires 300ms after the user stops typing rather than on every keystroke.
+// No dependency on anything search-specific — could debounce any value.
 import { useEffect, useState } from 'react';
 
 /**

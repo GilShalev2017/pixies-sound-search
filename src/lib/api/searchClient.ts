@@ -1,3 +1,10 @@
+// Client-side entry point of the request path. Called by the
+// `useTrackSearch` hook (src/hooks/useTrackSearch.ts) - a React component
+// never calls `fetch` directly, it goes through this function so the
+// fetch/parse/error-mapping logic is written once and unit-testable.
+//
+// searchTracks() -> GET /api/tracks/search (src/app/api/tracks/search/route.ts)
+// -> the active provider's search() -> back here as SearchResponseBody.
 import { SearchError } from '@/lib/domain/errors';
 import type { SearchQuery } from '@/lib/domain/track';
 import {

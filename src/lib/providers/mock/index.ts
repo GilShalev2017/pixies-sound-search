@@ -1,3 +1,9 @@
+// The second `SoundProvider` (see ../types.ts) - selected by registry.ts's
+// getActiveProvider() only when SOUND_PROVIDER=mock. Same interface as
+// ../mixcloud/index.ts, called the same way from GET() in route.ts, but
+// every "result" is fabricated below from a deterministic hash instead
+// of a real fetch() - useful when there's no network, or to reliably
+// hit specific UI states (see the `term.includes('boom'/'zzz')` hooks).
 import { SearchError } from '@/lib/domain/errors';
 import type { Track, TrackPage } from '@/lib/domain/track';
 import type { ProviderSearchOptions, SoundProvider } from '../types';

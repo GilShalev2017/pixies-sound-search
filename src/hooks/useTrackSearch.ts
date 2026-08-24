@@ -1,5 +1,12 @@
 'use client';
 
+// The one hook SoundExplorer.tsx calls to drive the whole search feature:
+// `const search = useTrackSearch(term)`. It wraps TanStack Query's
+// useQuery around searchClient.ts's searchTracks() (the client-side leg
+// of the request path — see searchClient.ts's own header) and layers
+// this app's own cursor-paging state (src/lib/core/pagination.ts) on top,
+// since TanStack Query only knows how to cache/dedupe by query key, not
+// how to walk "next"/"previous" through opaque provider cursors.
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { searchKeys } from '@/lib/api/queryKeys';

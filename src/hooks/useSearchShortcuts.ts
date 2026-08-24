@@ -1,5 +1,9 @@
 'use client';
 
+// Called once from SoundExplorer.tsx: `useSearchShortcuts(inputRef,
+// clearSearch)`. Pure side-effect hook - it returns nothing, just attaches
+// a window keydown listener for the app's two keyboard shortcuts and
+// cleans it up on unmount. Independent of the other hooks in this folder.
 import { useEffect, type RefObject } from 'react';
 
 function isTypingTarget(target: EventTarget | null): boolean {

@@ -1,3 +1,11 @@
+// The default `SoundProvider` (see ../types.ts) - the live adapter that
+// actually talks to Mixcloud's public API. Selected by registry.ts's
+// getActiveProvider() whenever SOUND_PROVIDER is unset or "mixcloud".
+// Its two methods, `search` and `isValidCursor`, are called directly by
+// GET() in route.ts. Raw Mixcloud JSON never leaves this file: `search`
+// hands it to mapSearchResponse() (./mapper.ts) before returning, so
+// everything upstream of here only ever sees the domain Track/TrackPage
+// shape from src/lib/domain/track.ts.
 import { SearchError } from '@/lib/domain/errors';
 import type { TrackPage } from '@/lib/domain/track';
 import type { ProviderSearchOptions, SoundProvider } from '../types';

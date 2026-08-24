@@ -1,5 +1,11 @@
 'use client';
 
+// Not called directly by any component - it's the shared plumbing behind
+// two other hooks in this folder, useViewMode.ts and useSearchHistory.ts,
+// each of which passes it a store factory from src/lib/core/preferences.ts
+// (which in turn wraps src/lib/core/storage.ts, the localStorage-backed
+// store). This file only knows how to bind an arbitrary external store to
+// React; it has no idea what "view mode" or "search history" mean.
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { createReactiveStore, type TypedStore } from '@/lib/core/storage';
 
