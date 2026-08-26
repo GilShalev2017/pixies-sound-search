@@ -1,3 +1,7 @@
+// Unit tests for searchClient.ts's searchTracks() - the client-side leg
+// of the request path. Stubs `fetchImpl` directly (see that function's
+// injectable-fetch param) rather than mocking the global fetch, so no
+// real network or server is involved.
 import { describe, expect, it, vi } from 'vitest';
 import { SearchError } from '@/lib/domain/errors';
 import { searchTracks } from './searchClient';

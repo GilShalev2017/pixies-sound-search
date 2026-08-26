@@ -1,5 +1,9 @@
 'use client';
 
+// One card of the tile-view results, rendered by ResultsPanel.tsx inside
+// a grid `<ul>` when viewMode is "tile" - the counterpart to
+// ResultRow.tsx's list view. Same role as ResultRow: `artRef` is what
+// lib/ui/fly.ts animates from when this tile is picked.
 import { useRef } from 'react';
 import { formatDuration } from '@/lib/core/format';
 import type { Track } from '@/lib/domain/track';

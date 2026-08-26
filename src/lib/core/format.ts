@@ -1,3 +1,8 @@
+// Called from the result/stage components that render a Track:
+// ResultRow.tsx and ResultTile.tsx (formatDuration, formatCount) and
+// ImageStage.tsx (all three, including formatYear). No caller outside
+// src/components - these exist purely to turn raw domain-model numbers
+// into display strings.
 /** Display helpers. Pure, so they are testable and reusable across components. */
 
 export function formatDuration(seconds: number | null): string | null {

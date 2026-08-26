@@ -1,3 +1,7 @@
+// Vitest + Testing Library, run by `npm test`. Exercises ResultsPanel.tsx
+// directly with hand-built props (no real hook, no network) - possible
+// only because that component takes everything as props and does no
+// fetching itself (see its own header comment).
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

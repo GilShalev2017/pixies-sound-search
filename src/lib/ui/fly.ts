@@ -1,3 +1,7 @@
+// Called from one place: SoundExplorer.tsx's `handleSelect`, right after a
+// result is clicked, before the track is set as `selected`. It's the only
+// export (`flyToStage`) - purely visual, has no idea what a "track" is,
+// just animates one DOM rect to another.
 /**
  * The "fly to the image container" transition.
  *

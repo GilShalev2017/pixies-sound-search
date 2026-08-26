@@ -1,5 +1,10 @@
 'use client';
 
+// Rendered by SoundExplorer.tsx below ResultsPanel.tsx. Its Prev/Next
+// buttons call straight through to useTrackSearch.ts's goToPrevPage/
+// goToNextPage (via the `search` prop object passed down); the
+// list/tile toggle at the right calls useViewMode.ts's setter. It has no
+// state of its own - `page`/`canPrev`/`canNext` all come from the hook.
 import type { ViewMode } from '@/lib/core/preferences';
 import { ChevronLeft, ChevronRight, ListIcon, TileIcon } from './Icons';
 

@@ -1,3 +1,7 @@
+// Just the `SelectTrackHandler` type, shared by every component that can
+// trigger a selection (ResultRow.tsx, ResultTile.tsx) and by
+// SoundExplorer.tsx, which implements it as `handleSelect` and passes it
+// down through ResultsPanel.tsx.
 import type { Track } from '@/lib/domain/track';
 
 /**

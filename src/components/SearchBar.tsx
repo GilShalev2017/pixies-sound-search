@@ -1,6 +1,10 @@
 'use client';
 
-import { type FormEvent, type RefObject } from 'react';
+// Rendered by SoundExplorer.tsx, wired to its `inputValue` state and
+// `submit` callback. Deliberately "dumb": it holds no state of its own,
+// so typing, submitting and clearing are all reported upward via props
+// rather than decided here - see the "Presentational" note below.
+import { type RefObject, type SubmitEvent } from 'react';
 import { CloseIcon, SearchIcon } from './Icons';
 
 export interface SearchBarProps {
@@ -15,7 +19,7 @@ export interface SearchBarProps {
 
 /** Presentational: it owns no data, it only reports what the user typed. */
 export function SearchBar({ value, onChange, onSubmit, isBusy = false, inputRef, resultsId }: SearchBarProps) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit(value);
   };

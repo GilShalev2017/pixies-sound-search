@@ -1,3 +1,6 @@
+// Unit tests for the pure functions in history.ts - dedup, ordering,
+// case-insensitivity, the 5-entry cap, and parseHistory's defensive
+// parsing of whatever localStorage happens to contain.
 import { describe, expect, it } from 'vitest';
 import { MAX_HISTORY_ENTRIES, addSearchTerm, normalizeTerm, parseHistory, removeSearchTerm } from './history';
 

@@ -12,7 +12,14 @@ export const MIXCLOUD_API_ORIGIN = 'https://api.mixcloud.com';
 // key (`/user/show/`) or its full URL as the `feed` parameter.
 const WIDGET_BASE = 'https://www.mixcloud.com/widget/iframe/';
 
-/** Pick the best available picture without assuming any single key exists. */
+/**
+ * In plain terms: Mixcloud doesn't always send every size of a track's cover
+ * picture — sometimes the "medium" one is missing, sometimes the "large" one
+ * is. This function is given a wish-list of sizes in order of preference,
+ * and tries them one by one until it finds one that Mixcloud actually sent.
+ * If none of the sizes on the list are available, it gives back nothing
+ * (instead of crashing or making one up).
+ */
 function pick(pictures: MixcloudPictures | undefined, keys: readonly (keyof MixcloudPictures)[]): string | null {
   if (!pictures) return null;
   for (const key of keys) {
@@ -23,9 +30,15 @@ function pick(pictures: MixcloudPictures | undefined, keys: readonly (keyof Mixc
 }
 
 /**
- * Mixcloud embeds are driven by the cloudcast's canonical URL, falling back to
- * its key (e.g. `/spartacus/party-time/`) when the payload omits the URL.
- * `light=1` gives the compact player that sits nicely under the artwork.
+ * In plain terms: to let someone press play right on our page (instead of
+ * being sent away to Mixcloud's website), we need to build a special web
+ * address that loads Mixcloud's own small music-player widget. This
+ * function builds that address from whatever identifies the track — its
+ * full web link if we have one, otherwise its short internal code — and
+ * tacks on a few display options, like "use the compact player" and,
+ * optionally, "start playing immediately". If we have neither a link nor a
+ * code for the track, there is nothing to build a player for, so it gives
+ * back nothing.
  */
 export function buildEmbedUrl(key: string | undefined, url: string | undefined, autoplay: boolean): string | null {
   const feed = url ?? key;
@@ -39,6 +52,18 @@ export function buildEmbedUrl(key: string | undefined, url: string | undefined, 
   return `${WIDGET_BASE}?${params.toString()}`;
 }
 
+/**
+ * In plain terms: Mixcloud sends back information about one track in its
+ * own format, with fields that are sometimes missing or oddly shaped. This
+ * function takes one such track and reshapes it into the simple, reliable
+ * format the rest of our app expects: a title, an artist name, a cover
+ * picture, how long it runs, how many times it's been played, when it was
+ * published, up to three tags, and a link to a playable widget (built by
+ * `buildEmbedUrl` above). If the track is missing the two things we
+ * absolutely need — something to identify it by, and a title — it's
+ * treated as unusable and this returns nothing, so a broken entry never
+ * ends up shown to the user as a nameless, blank result.
+ */
 export function mapCloudcast(raw: MixcloudCloudcast): Track | null {
   const id = raw.key ?? raw.url ?? null;
   if (!id || !raw.name) return null;
@@ -63,12 +88,28 @@ export function mapCloudcast(raw: MixcloudCloudcast): Track | null {
   };
 }
 
-/** Cursors are the opaque paging URLs Mixcloud hands back; we only keep our own origin. */
+/**
+ * In plain terms: when we ask Mixcloud for a page of search results, it
+ * often includes a special link for fetching the *next* page. That link
+ * gets sent back to our browser and, later, right back to our own server —
+ * so before trusting it, we double-check that it really does point at
+ * Mixcloud, using `isMixcloudUrl` below, and not somewhere else pretending
+ * to be Mixcloud. If it doesn't check out, or if there simply is no next
+ * page, this returns nothing rather than a link.
+ */
 export function sanitizeCursor(cursor: string | undefined): string | null {
   if (!cursor) return null;
   return isMixcloudUrl(cursor) ? cursor : null;
 }
 
+/**
+ * In plain terms: this checks whether a given web address genuinely
+ * belongs to Mixcloud, rather than trusting it just because it looks like
+ * a URL. It's also reused elsewhere in the app as the check for "is this a
+ * cursor I recognise" — since a Mixcloud paging link and a Mixcloud web
+ * address are the same kind of thing. If the text isn't even a valid web
+ * address at all, it's treated as untrustworthy too, not as an error.
+ */
 export function isMixcloudUrl(value: string): boolean {
   try {
     const url = new URL(value);
@@ -78,6 +119,16 @@ export function isMixcloudUrl(value: string): boolean {
   }
 }
 
+/**
+ * In plain terms: this is the "do everything" function for one page of
+ * search results. It takes the whole reply Mixcloud sent back — the list
+ * of tracks, plus the links to the next and previous pages — and turns it
+ * into the shape our app understands. Each track is reshaped one at a time
+ * by `mapCloudcast` above, and any track that came back too broken to use
+ * is quietly left out rather than shown as an empty result. The next/previous
+ * page links are double-checked by `sanitizeCursor` above before being
+ * trusted.
+ */
 export function mapSearchResponse(raw: MixcloudSearchResponse): TrackPage {
   const items = (raw.data ?? [])
     .map(mapCloudcast)

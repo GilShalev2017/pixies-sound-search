@@ -1,3 +1,8 @@
+// Unit tests for mapper.ts, the Mixcloud-raw-JSON -> domain-model
+// translation. `RAW` below is a hand-built fixture matching
+// MixcloudSearchResponse (./types.ts), including a deliberately broken
+// entry and an off-origin `previous` cursor, to prove malformed items are
+// dropped and untrusted cursors are rejected rather than trusted verbatim.
 import { describe, expect, it } from 'vitest';
 import { buildEmbedUrl, isMixcloudUrl, mapCloudcast, mapSearchResponse, sanitizeCursor } from './mapper';
 import type { MixcloudSearchResponse } from './types';

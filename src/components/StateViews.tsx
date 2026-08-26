@@ -1,5 +1,10 @@
 'use client';
 
+// The four "no real results to show yet" views ResultsPanel.tsx switches
+// between: IdleState (nothing searched), ResultsSkeleton (loading),
+// EmptyState (zero matches) and ErrorState (the search failed).
+// ErrorState is the one place `toUserMessage` (src/lib/domain/errors.ts)
+// is called, turning a caught SearchError into the copy shown here.
 import type { ViewMode } from '@/lib/core/preferences';
 import { toUserMessage } from '@/lib/domain/errors';
 import { AlertIcon, SearchIcon, SparkIcon } from './Icons';

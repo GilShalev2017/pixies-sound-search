@@ -1,3 +1,7 @@
+// Static help card, rendered by SoundExplorer.tsx next to RecentSearches.
+// Purely descriptive - the shortcuts it lists are actually implemented
+// in useSearchShortcuts.ts; this file just documents them for the user
+// and has no behavior of its own.
 const HINTS: ReadonlyArray<{ keys: string[]; description: string }> = [
   { keys: ['/'], description: 'Jump to the search box' },
   { keys: ['Enter'], description: 'Search now, without waiting for the debounce' },

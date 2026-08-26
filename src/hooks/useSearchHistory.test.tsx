@@ -1,3 +1,7 @@
+// Covers both persisted-state hooks (useSearchHistory.ts, useViewMode.ts)
+// through `renderHook`, backed by the real browser localStorage (cleared
+// before each test) rather than a mock - proving the round-trip through
+// usePersistentState.ts -> preferences.ts -> storage.ts actually persists.
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { STORAGE_KEYS } from '@/lib/core/preferences';

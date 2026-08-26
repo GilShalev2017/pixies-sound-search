@@ -1,5 +1,10 @@
 'use client';
 
+// Rendered by SoundExplorer.tsx, backed by useSearchHistory.ts's
+// `entries`/`forget`/`clear`. Clicking an entry calls SoundExplorer's
+// `searchFromHistory`, which re-submits that term and refocuses the
+// search box - this component itself only reports clicks, it doesn't
+// trigger a search directly.
 import { CloseIcon, HistoryIcon } from './Icons';
 
 export interface RecentSearchesProps {

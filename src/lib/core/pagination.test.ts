@@ -1,3 +1,6 @@
+// Unit tests for the cursor-paging state machine in pagination.ts, the
+// piece useTrackSearch.ts relies on to walk forward/back without
+// re-deriving cursors from an offset.
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_CURSOR_STATE,

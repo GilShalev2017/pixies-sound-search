@@ -49,7 +49,7 @@ In mock mode a few terms drive the edge cases on purpose: anything containing `z
 
 ## Architecture
 
-The brief asked for layers that can change independently, so the code is split by **responsibility**, not by file type:
+The brief asked for layers that can change independently, so the code is split by **responsibility**, not by file type.
 
 ```
 src/

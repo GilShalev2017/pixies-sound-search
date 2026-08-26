@@ -1,3 +1,7 @@
+// Used only by useTrackSearch.ts, which stores a `CursorState` in
+// component state and calls these functions to move through it as the
+// user pages forward/back. No React, no fetching - just the bookkeeping
+// of which cursor belongs to which page; see pagination.test.ts.
 /**
  * Cursor pagination as a pure state machine.
  *

@@ -1,5 +1,12 @@
 'use client';
 
+// Next.js App Router special file: src/app/error.tsx is a "global error
+// boundary" for the whole app (named exactly `error.tsx`, must be a
+// client component, must default-export a component that takes
+// `error`/`reset`). Next.js mounts this automatically, in place of
+// RootLayout's children, whenever a rendering error escapes any page or
+// component below it - nothing here is called from our own code. `reset`
+// is supplied by Next.js; calling it tries re-rendering the tree that crashed.
 import { useEffect } from 'react';
 
 /** Last line of defence: a rendering crash still leaves the user somewhere to go. */

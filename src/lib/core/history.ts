@@ -1,3 +1,8 @@
+// `normalizeTerm` is shared widely (SoundExplorer.tsx, the mixcloud
+// provider isn't involved - this is UI-side only). `addSearchTerm` and
+// `removeSearchTerm` are called only from useSearchHistory.ts; `parseHistory`
+// is called only from preferences.ts's `readHistory`, to validate whatever
+// was persisted. Kept framework-free on purpose: see history.test.ts.
 /**
  * Recent-searches logic. Pure functions, zero framework — this is the kind of
  * rule that deserves tests rather than a click-through.

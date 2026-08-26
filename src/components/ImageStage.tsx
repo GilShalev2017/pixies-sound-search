@@ -1,5 +1,10 @@
 'use client';
 
+// The "Now showing" panel, rendered by SoundExplorer.tsx next to the
+// results list. `frameRef` is the flight *target* lib/ui/fly.ts measures
+// (the counterpart to ResultRow/ResultTile's `artRef` source); once the
+// track prop is set, clicking the cover calls `onPlay`, which mounts
+// TrackPlayer.tsx below it.
 import type { RefObject } from 'react';
 import { formatCount, formatDuration, formatYear } from '@/lib/core/format';
 import type { Track } from '@/lib/domain/track';

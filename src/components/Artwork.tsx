@@ -4,6 +4,10 @@
    provider is plugged in, so the view must stay host-agnostic; `next/image`
    would force provider hostnames into next.config.ts. */
 
+// Shared <img> wrapper, rendered by ResultRow.tsx, ResultTile.tsx and
+// ImageStage.tsx wherever a track's cover needs to show - centralizing
+// the "image 404'd, show a gradient instead" fallback so each caller
+// doesn't reimplement it.
 import { useState } from 'react';
 import { WaveIcon } from './Icons';
 

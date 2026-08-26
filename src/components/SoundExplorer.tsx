@@ -1,5 +1,12 @@
 'use client';
 
+// Rendered once, by Home (src/app/page.tsx), as the interactive body of
+// the "/" page. This is the file that ties together everything explained
+// so far: it calls all seven hooks in src/hooks/, and renders every other
+// component in this folder (SearchBar, ResultsPanel, ImageStage,
+// RecentSearches, KeyboardHints, PaginationBar) as children, passing them
+// plain props/callbacks. Read this file to see how the pieces compose;
+// read the individual hooks/components to see how each piece works.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';

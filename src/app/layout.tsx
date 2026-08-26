@@ -1,3 +1,11 @@
+// Next.js App Router special file, same family as route.ts and error.tsx:
+// this is the root layout, required at src/app/layout.tsx. Next.js renders
+// it automatically around every page in the app - nothing in this
+// codebase imports or calls `RootLayout` directly. `{children}` is
+// whichever page matched the URL (for "/" that's src/app/page.tsx).
+// Because this wraps everything, it's also where app-wide providers live:
+// QueryProvider here sets up the TanStack Query client that useTrackSearch
+// (src/hooks/useTrackSearch.ts) depends on.
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { GeistMono } from 'geist/font/mono';

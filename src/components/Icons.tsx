@@ -1,3 +1,7 @@
+// One inline SVG icon set, imported piecemeal across src/components/ (no
+// icon library dependency). Each export is a plain function component
+// spreading a shared stroke style (`base`) plus whatever props its caller
+// passes, so callers can override size/color/className freely.
 import type { SVGProps } from 'react';
 
 type IconProps = SVGProps<SVGSVGElement>;

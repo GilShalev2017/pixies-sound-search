@@ -1,3 +1,7 @@
+// Rendered once by Home (src/app/page.tsx), above SoundExplorer. No
+// 'use client' - it's a server component, so it costs nothing in the
+// client JS bundle. `providerLabel` is the only data it needs, passed
+// down from the server-side getActiveProvider() call in page.tsx.
 import { SparkIcon } from './Icons';
 
 /** Static, server-rendered chrome — no state, no client bundle. */

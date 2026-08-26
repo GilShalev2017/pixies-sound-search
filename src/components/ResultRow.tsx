@@ -1,5 +1,9 @@
 'use client';
 
+// One row of the list-view results, rendered by ResultsPanel.tsx inside a
+// `<ul>` when viewMode is "list" (ResultTile.tsx is its tile-view sibling,
+// for the other mode). `artRef` (below) is the DOM node
+// lib/ui/fly.ts's flyToStage() animates from, once onSelect fires.
 import { useRef } from 'react';
 import { formatCount, formatDuration } from '@/lib/core/format';
 import type { Track } from '@/lib/domain/track';

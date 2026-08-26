@@ -1,3 +1,6 @@
+// Run by `npm test`, not called by app code. Iterates `providers` from
+// registry.ts (currently mixcloud + mock) via `describe.each`, so adding
+// a third provider to that registry automatically gets it checked here too.
 import { describe, expect, it } from 'vitest';
 import { SearchError } from '@/lib/domain/errors';
 import type { Track } from '@/lib/domain/track';

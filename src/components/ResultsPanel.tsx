@@ -1,5 +1,12 @@
 'use client';
 
+// Rendered by SoundExplorer.tsx with the whole `search` object
+// (useTrackSearch.ts's return value) spread across its props. It's the
+// switchboard for "what does the results area look like right now": it
+// picks exactly one of IdleState/ResultsSkeleton/ErrorState/EmptyState
+// (all from ./StateViews.tsx) or a real list of ResultRow/ResultTile,
+// based on the flags it was handed - it does no fetching itself, which is
+// what ResultsPanel.test.tsx exercises directly (see that file's header).
 import type { ViewMode } from '@/lib/core/preferences';
 import type { Track } from '@/lib/domain/track';
 import { ResultRow } from './ResultRow';

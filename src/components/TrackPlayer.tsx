@@ -1,5 +1,10 @@
 'use client';
 
+// Rendered by ImageStage.tsx, only while `isPlaying` is true for the
+// currently staged track. It embeds `track.embedUrl`, a field the active
+// SoundProvider adapter (mixcloud/index.ts or mock/index.ts) already
+// decided how to build - this component doesn't know or care which
+// provider produced it.
 import type { Track } from '@/lib/domain/track';
 import { CloseIcon } from './Icons';
 

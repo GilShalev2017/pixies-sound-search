@@ -102,10 +102,12 @@ export const mockProvider: SoundProvider = {
       makeTrack(term, offset + i),
     );
 
-    return {
+    const returnVal = {
       items,
       nextCursor: offset + limit < total ? `${CURSOR_PREFIX}${offset + limit}` : null,
       prevCursor: offset > 0 ? `${CURSOR_PREFIX}${Math.max(0, offset - limit)}` : null,
     };
+    console.debug(`mockProvider.search(${term}, ${limit}, ${cursor}) =>`, returnVal);
+    return returnVal;
   },
 };

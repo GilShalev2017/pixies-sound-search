@@ -1,3 +1,8 @@
+// Exercises useTrackSearch.ts's async correctness claims (see that file's
+// header) - the query-key-includes-cursor cancellation behaviour, and the
+// nav lock that blocks paging until a page has settled. Uses a hand-rolled
+// fetch stub (below) instead of a real network mock, so the test can
+// resolve responses out of order and prove races are actually handled.
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
