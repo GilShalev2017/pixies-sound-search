@@ -20,6 +20,17 @@ function rectOf(element: Element): DOMRect {
   return element.getBoundingClientRect();
 }
 
+/**
+ * What this does, step by step:
+ * 1. Bails out immediately (no animation) if reduced-motion is on, this
+ *    isn't running in a browser, or the Web Animations API is unsupported.
+ * 2. Measures `source` and `target`'s current on-screen rectangles.
+ * 3. Creates a throwaway `ghost` div, styled to sit exactly on top of
+ *    `source` (same position/size, same image or a fallback gradient).
+ * 4. Computes how far the ghost needs to move and scale to land on `target`.
+ * 5. Animates the ghost through those keyframes with `.animate()`.
+ * 6. Once the animation finishes (or errors), removes the ghost from the DOM.
+ */
 export function flyToStage(source: Element, target: Element, options: FlyOptions): Promise<void> {
   const { imageUrl, durationMs = 720, reducedMotion = false } = options;
 
