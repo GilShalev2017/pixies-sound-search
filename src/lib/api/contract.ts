@@ -4,6 +4,9 @@
 // Nothing here executes on its own; it's imported by both sides so a
 // change to the JSON shape is a compile error in both places at once,
 // instead of a runtime mismatch discovered by a user.
+
+//Helper functions to validate the response shape of the JSON payloads, 
+//since TypeScript types are erased at runtime and cannot be trusted to match the actual data.
 import type { Track, TrackPage } from '@/lib/domain/track';
 import type { SearchErrorKind } from '@/lib/domain/errors';
 
