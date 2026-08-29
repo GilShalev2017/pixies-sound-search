@@ -1,0 +1,110 @@
+{
+  // .vscode/launch.json — VS Code accepts comments in this file (JSONC).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Breakpoints in: app/api/tracks/search/route.ts, lib/providers/*, registry.ts, page.tsx, layout.tsx
+      "name": "Next: server only",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      // Breakpoints in: components/*, hooks/*, lib/api/searchClient.ts, lib/ui/fly.ts
+      // Start "Next: server only" (or `npm run dev`) FIRST, then launch this.
+      "name": "Next: client only (attach Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/./*": "${workspaceFolder}/*",
+        "webpack://*": "${workspaceFolder}/*"
+      }
+    },
+    {
+      // One click: starts the dev server, waits for it, opens Chrome attached.
+      // Breakpoints work on BOTH sides — this is the one to use day to day.
+      "name": "Next: full stack",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "args": ["dev"],
+      "runtimeArgs": ["--inspect"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}",
+        "killOnServerStop": true
+      }
+    },
+    {
+      // Same, but with the offline mock provider — no Mixcloud needed.
+      "name": "Next: full stack (mock provider)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "args": ["dev"],
+      "runtimeArgs": ["--inspect"],
+      "cwd": "${workspaceFolder}",
+      "env": { "SOUND_PROVIDER": "mock" },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}",
+        "killOnServerStop": true
+      }
+    },
+    {
+      // Debug the test file you currently have open. Open e.g. useTrackSearch.test.tsx, then F5.
+      "name": "Vitest: current file",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      // Debug the whole unit suite.
+      "name": "Vitest: all tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": ["run"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      // Playwright's own inspector: steps through the spec and highlights each locator
+      // in a real browser. Requires a production build first: npm run build
+      "name": "Playwright: e2e with inspector",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx playwright test --debug",
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      // If you prefer running the two Next configs separately but together.
+      "name": "Next: server + client",
+      "configurations": ["Next: server only", "Next: client only (attach Chrome)"],
+      "stopAll": true
+    }
+  ]
+}
